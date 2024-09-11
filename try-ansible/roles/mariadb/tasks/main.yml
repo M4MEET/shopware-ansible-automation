@@ -1,0 +1,20 @@
+---
+- name: Add MariaDB public key directly from MariaDB website
+  apt_key:
+    url: https://mariadb.org/mariadb_release_signing_key.asc
+    state: present
+
+- name: Add MariaDB official repository for version 10.3
+  apt_repository:
+    repo: "deb [arch=amd64] http://downloads.mariadb.com/MariaDB/mariadb-10.3/repo/ubuntu focal main"
+    state: present
+    update_cache: yes
+
+- name: Install MariaDB 10.3.39
+  apt:
+    name: mariadb-server
+    state: present
+
+- name: Restart MariaDB service
+  command: service mariadb restart
+  ignore_errors: yes

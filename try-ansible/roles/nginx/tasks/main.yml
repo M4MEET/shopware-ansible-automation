@@ -1,0 +1,26 @@
+---
+- name: Install Nginx
+  apt:
+    name: nginx
+    state: present
+
+- name: Start Nginx service using service command
+  command: service nginx start
+  ignore_errors: yes
+
+- name: Set up Nginx configuration for Shopware
+  template:
+    src: shopware-nginx.conf.j2
+    dest: /etc/nginx/sites-available/shopware.conf
+  notify:
+    - restart nginx
+
+- name: Enable Shopware site in Nginx
+  file:
+    src: /etc/nginx/sites-available/shopware.conf
+    dest: /etc/nginx/sites-enabled/shopware.conf
+    state: link
+
+- name: Restart Nginx using service command
+  command: service nginx restart
+  ignore_errors: yes
