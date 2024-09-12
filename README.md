@@ -35,15 +35,13 @@ cd shopware-ansible-automation
 Step 2: Update Inventory File
 Modify the inventory file to match your server's configuration:
 
-ini
-Copy code
+
 [shopware]
 your_server_ip_or_domain
 Step 3: Run the Playbook
 Run the playbook with the following command:
 
-bash
-Copy code
+
 ansible-playbook playbook.yml -i inventory -v
 Step 4: Access Shopware
 Once the playbook completes, Shopware will be installed and ready to access in your web browser at your server's domain or IP address.
@@ -52,8 +50,7 @@ Playbook Details
 Nginx Configuration
 Nginx is installed and configured to serve Shopware. You can customize the configuration template located at:
 
-bash
-Copy code
+
 roles/nginx/templates/shopware-nginx.conf.j2
 PHP Installation
 The playbook installs PHP 8.2 along with all required extensions for Shopware, such as curl, pdo_mysql, gd, mbstring, etc.
@@ -61,14 +58,11 @@ The playbook installs PHP 8.2 along with all required extensions for Shopware, s
 MariaDB Setup
 MariaDB 10.3 is installed and configured as the database for Shopware. You can modify the database connection settings by updating the playbook in:
 
-bash
-Copy code
+
 roles/mariadb/tasks/main.yml
 Shopware Installation
 Shopware is installed using Composer with the following command:
 
-bash
-Copy code
 composer create-project shopware/production:6.5.8.7 /var/www/shopware --no-interaction
 You can modify the version or install the latest version by removing the version specification.
 
