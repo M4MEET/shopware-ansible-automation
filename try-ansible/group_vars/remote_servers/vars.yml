@@ -1,0 +1,2 @@
+---
+shopware_db_password: "{{ vault_shopware_db_password }}"

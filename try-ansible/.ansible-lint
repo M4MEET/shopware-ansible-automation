@@ -1,0 +1,7 @@
+---
+profile: production
+skip_list:
+  - yaml[truthy]
+  - name[template]
+exclude_paths:
+  - playbook_output.log

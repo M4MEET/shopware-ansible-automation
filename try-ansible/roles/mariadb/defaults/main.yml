@@ -1,0 +1,6 @@
+---
+mariadb_version: "10.11"
+mariadb_mirror: "http://mirror.23media.com/mariadb"
+
+shopware_db_name: shopware
+shopware_db_user: shopware

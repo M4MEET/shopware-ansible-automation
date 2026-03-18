@@ -1,0 +1,21 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Ansible
+*.retry
+try-ansible/playbook_output.log
+
+# Sensitive files — never commit real credentials or inventory
+try-ansible/inventory
+try-ansible/group_vars/*/vault.yml
+try-ansible/host_vars/*/vault.yml
+*.vault.yml
+.vault_pass
+.vault_password
+try-ansible/.vault_pass
+
+# Environment files
+.env
+.env.*
+!.env.sample

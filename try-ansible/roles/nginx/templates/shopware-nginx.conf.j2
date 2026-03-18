@@ -1,7 +1,13 @@
 server {
     listen 80;
-    server_name localhost;
-    root /var/www/shopware/public;
+    server_name {{ server_name }};
+    root {{ shopware_root }}/public;
+    index index.php index.html;
+
+    client_max_body_size {{ client_max_body_size }};
+
+    access_log /var/log/nginx/shopware_access.log;
+    error_log /var/log/nginx/shopware_error.log;
 
     location / {
         try_files $uri /index.php$is_args$args;
@@ -9,7 +15,7 @@ server {
 
     location ~ \.php$ {
         include snippets/fastcgi-php.conf;
-        fastcgi_pass unix:/run/php/php8.2-fpm.sock;
+        fastcgi_pass unix:/run/php/php{{ php_version }}-fpm.sock;
     }
 
     location ~ /\.ht {
