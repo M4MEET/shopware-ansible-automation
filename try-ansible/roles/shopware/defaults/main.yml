@@ -1,0 +1,10 @@
+---
+shopware_version: "6.5.8.7"
+shopware_root: "/var/www/shopware"
+shopware_web_user: "www-data"
+shopware_web_group: "www-data"
+
+shopware_app_url: "http://localhost"
+shopware_app_env: "prod"
+shopware_app_secret: "{{ lookup('password', '/dev/null length=32 chars=hexdigits') }}"
+shopware_instance_id: "{{ lookup('password', '/dev/null length=32 chars=hexdigits') }}"
