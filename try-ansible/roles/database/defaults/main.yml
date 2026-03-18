@@ -1,6 +1,14 @@
 ---
+# Options: "mariadb" or "mysql"
+db_engine: mariadb
+
+# MariaDB-specific
 mariadb_version: "10.11"
 mariadb_mirror: "http://mirror.23media.com/mariadb"
 
+# MySQL-specific
+mysql_version: "8.0"
+
+# Shared
 shopware_db_name: shopware
 shopware_db_user: shopware

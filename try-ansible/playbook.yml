@@ -9,8 +9,8 @@
       tags: [ufw, security, firewall]
     - role: php
       tags: [php, setup]
-    - role: mariadb
-      tags: [mariadb, database]
+    - role: database
+      tags: [database, mariadb, mysql]
     - role: nginx
       tags: [nginx, webserver]
     - role: shopware
