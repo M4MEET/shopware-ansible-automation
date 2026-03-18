@@ -1,0 +1,10 @@
+[remote_servers]
+your_server_ip_or_domain ansible_user=root
+
+# Example with SSH key:
+# 192.168.1.100 ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_rsa
+
+# Example with multiple hosts:
+# [remote_servers]
+# web1.example.com ansible_user=root
+# web2.example.com ansible_user=root
