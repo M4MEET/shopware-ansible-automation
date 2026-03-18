@@ -4,23 +4,67 @@
     name: nginx
     state: present
 
-- name: Start Nginx service using service command
-  command: service nginx start
-  ignore_errors: yes
+- name: Ensure Nginx is running and enabled at boot
+  systemd:
+    name: nginx
+    state: started
+    enabled: true
+
+- name: Remove default Nginx site
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: restart nginx
 
 - name: Set up Nginx configuration for Shopware
   template:
     src: shopware-nginx.conf.j2
     dest: /etc/nginx/sites-available/shopware.conf
-  notify:
-    - restart nginx
+  notify: restart nginx
 
 - name: Enable Shopware site in Nginx
   file:
     src: /etc/nginx/sites-available/shopware.conf
     dest: /etc/nginx/sites-enabled/shopware.conf
     state: link
+  notify: restart nginx
 
-- name: Restart Nginx using service command
-  command: service nginx restart
-  ignore_errors: yes
+- name: Deploy Nginx log rotation config
+  template:
+    src: logrotate-nginx.j2
+    dest: /etc/logrotate.d/shopware-nginx
+    mode: "0644"
+
+- name: Deploy Shopware application log rotation config
+  template:
+    src: logrotate-shopware.j2
+    dest: /etc/logrotate.d/shopware-app
+    mode: "0644"
+
+- name: Install Certbot and Nginx plugin
+  apt:
+    name:
+      - certbot
+      - python3-certbot-nginx
+    state: present
+  when: ssl_enabled
+
+- name: Obtain SSL certificate from Let's Encrypt
+  command: >
+    certbot --nginx
+    -d {{ server_name }}
+    --non-interactive
+    --agree-tos
+    -m {{ certbot_email }}
+  args:
+    creates: "/etc/letsencrypt/live/{{ server_name }}/fullchain.pem"
+  when: ssl_enabled and server_name != "_"
+  notify: restart nginx
+
+- name: Set up automatic certificate renewal cron job
+  cron:
+    name: "certbot renewal"
+    hour: "{{ certbot_renew_cron_hour }}"
+    minute: "{{ certbot_renew_cron_minute }}"
+    job: "certbot renew --quiet --deploy-hook 'systemctl reload nginx'"
+  when: ssl_enabled and certbot_auto_renew

@@ -1,0 +1,13 @@
+---
+php_version: "8.2"
+server_name: "_"
+shopware_root: "/var/www/shopware"
+client_max_body_size: "128M"
+shopware_web_user: "www-data"
+shopware_web_group: "www-data"
+
+ssl_enabled: false
+certbot_email: ""
+certbot_auto_renew: true
+certbot_renew_cron_hour: "3"
+certbot_renew_cron_minute: "30"
