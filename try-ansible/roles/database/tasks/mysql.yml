@@ -1,27 +1,27 @@
 ---
 - name: Download MySQL APT config package
-  get_url:
+  ansible.builtin.get_url:
     url: "https://dev.mysql.com/get/mysql-apt-config_0.8.30-1_all.deb"
     dest: /tmp/mysql-apt-config.deb
     mode: "0644"
 
 - name: Install MySQL APT config package
-  apt:
+  ansible.builtin.apt:
     deb: /tmp/mysql-apt-config.deb
   environment:
     DEBIAN_FRONTEND: noninteractive
 
 - name: Update apt cache after adding MySQL repo
-  apt:
-    update_cache: yes
+  ansible.builtin.apt:
+    update_cache: true
 
 - name: Install MySQL server {{ mysql_version }}
-  apt:
+  ansible.builtin.apt:
     name: mysql-server
     state: present
 
 - name: Ensure MySQL is running and enabled at boot
-  systemd:
+  ansible.builtin.systemd:
     name: mysql
     state: started
     enabled: true

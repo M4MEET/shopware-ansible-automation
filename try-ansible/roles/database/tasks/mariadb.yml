@@ -1,23 +1,26 @@
 ---
 - name: Download MariaDB signing key
-  get_url:
+  ansible.builtin.get_url:
     url: https://mariadb.org/mariadb_release_signing_key.asc
     dest: /usr/share/keyrings/mariadb-archive-keyring.asc
     mode: "0644"
 
-- name: Add MariaDB {{ mariadb_version }} APT repository
-  apt_repository:
-    repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/mariadb-archive-keyring.asc] {{ mariadb_mirror }}/repo/{{ mariadb_version }}/ubuntu {{ ansible_distribution_release }} main"
+- name: Add MariaDB APT repository for version {{ mariadb_version }}
+  ansible.builtin.apt_repository:
+    repo: >-
+      deb [arch=amd64 signed-by=/usr/share/keyrings/mariadb-archive-keyring.asc]
+      {{ mariadb_mirror }}/repo/{{ mariadb_version }}/ubuntu
+      {{ ansible_distribution_release }} main
     state: present
-    update_cache: yes
+    update_cache: true
 
 - name: Install MariaDB server
-  apt:
+  ansible.builtin.apt:
     name: mariadb-server
     state: present
 
 - name: Ensure MariaDB is running and enabled at boot
-  systemd:
+  ansible.builtin.systemd:
     name: mariadb
     state: started
     enabled: true

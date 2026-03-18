@@ -1,48 +1,49 @@
 ---
 - name: Install Nginx
-  apt:
+  ansible.builtin.apt:
     name: nginx
     state: present
 
 - name: Ensure Nginx is running and enabled at boot
-  systemd:
+  ansible.builtin.systemd:
     name: nginx
     state: started
     enabled: true
 
 - name: Remove default Nginx site
-  file:
+  ansible.builtin.file:
     path: /etc/nginx/sites-enabled/default
     state: absent
-  notify: restart nginx
+  notify: Restart nginx
 
 - name: Set up Nginx configuration for Shopware
-  template:
+  ansible.builtin.template:
     src: shopware-nginx.conf.j2
     dest: /etc/nginx/sites-available/shopware.conf
-  notify: restart nginx
+    mode: "0644"
+  notify: Restart nginx
 
 - name: Enable Shopware site in Nginx
-  file:
+  ansible.builtin.file:
     src: /etc/nginx/sites-available/shopware.conf
     dest: /etc/nginx/sites-enabled/shopware.conf
     state: link
-  notify: restart nginx
+  notify: Restart nginx
 
 - name: Deploy Nginx log rotation config
-  template:
+  ansible.builtin.template:
     src: logrotate-nginx.j2
     dest: /etc/logrotate.d/shopware-nginx
     mode: "0644"
 
 - name: Deploy Shopware application log rotation config
-  template:
+  ansible.builtin.template:
     src: logrotate-shopware.j2
     dest: /etc/logrotate.d/shopware-app
     mode: "0644"
 
 - name: Install Certbot and Nginx plugin
-  apt:
+  ansible.builtin.apt:
     name:
       - certbot
       - python3-certbot-nginx
@@ -50,7 +51,7 @@
   when: ssl_enabled
 
 - name: Obtain SSL certificate from Let's Encrypt
-  command: >
+  ansible.builtin.command: >
     certbot --nginx
     -d {{ server_name }}
     --non-interactive
@@ -59,10 +60,10 @@
   args:
     creates: "/etc/letsencrypt/live/{{ server_name }}/fullchain.pem"
   when: ssl_enabled and server_name != "_"
-  notify: restart nginx
+  notify: Restart nginx
 
 - name: Set up automatic certificate renewal cron job
-  cron:
+  ansible.builtin.cron:
     name: "certbot renewal"
     hour: "{{ certbot_renew_cron_hour }}"
     minute: "{{ certbot_renew_cron_minute }}"

@@ -1,14 +1,14 @@
 ---
 - name: Install MariaDB
-  include_tasks: mariadb.yml
+  ansible.builtin.include_tasks: mariadb.yml
   when: db_engine == "mariadb"
 
 - name: Install MySQL
-  include_tasks: mysql.yml
+  ansible.builtin.include_tasks: mysql.yml
   when: db_engine == "mysql"
 
 - name: Install python3-mysqldb for Ansible mysql modules
-  apt:
+  ansible.builtin.apt:
     name: python3-mysqldb
     state: present
 
@@ -28,7 +28,7 @@
     query: "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost')"
     login_unix_socket: /var/run/mysqld/mysqld.sock
   changed_when: false
-  notify: flush mysql privileges
+  notify: Flush mysql privileges
 
 - name: Create Shopware database
   community.mysql.mysql_db:

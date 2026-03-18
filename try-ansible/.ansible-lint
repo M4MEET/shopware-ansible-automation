@@ -1,7 +1,6 @@
 ---
 profile: production
 skip_list:
-  - yaml[truthy]
-  - name[template]
+  - var-naming[no-role-prefix]
 exclude_paths:
   - playbook_output.log

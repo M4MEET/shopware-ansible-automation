@@ -1,42 +1,44 @@
 ---
 - name: Update apt cache
-  apt:
-    update_cache: yes
+  ansible.builtin.apt:
+    update_cache: true
     cache_valid_time: 3600
 
 - name: Install basic dependencies
-  apt:
+  ansible.builtin.apt:
     name: "{{ common_packages }}"
     state: present
 
 - name: Check if swap file exists
-  stat:
+  ansible.builtin.stat:
     path: "{{ swap_file_path }}"
   register: swap_file
   when: swap_enabled
 
 - name: Create swap file
-  command: "dd if=/dev/zero of={{ swap_file_path }} bs=1M count={{ swap_size_mb }}"
+  ansible.builtin.command: "dd if=/dev/zero of={{ swap_file_path }} bs=1M count={{ swap_size_mb }}"
   when: swap_enabled and not swap_file.stat.exists
   args:
     creates: "{{ swap_file_path }}"
 
 - name: Set swap file permissions
-  file:
+  ansible.builtin.file:
     path: "{{ swap_file_path }}"
     mode: "0600"
   when: swap_enabled
 
 - name: Format swap file
-  command: "mkswap {{ swap_file_path }}"
+  ansible.builtin.command: "mkswap {{ swap_file_path }}"
   when: swap_enabled and not swap_file.stat.exists
+  changed_when: false
 
 - name: Enable swap file
-  command: "swapon {{ swap_file_path }}"
+  ansible.builtin.command: "swapon {{ swap_file_path }}"
   when: swap_enabled and not swap_file.stat.exists
+  changed_when: false
 
 - name: Add swap to fstab
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/fstab
     line: "{{ swap_file_path }} none swap sw 0 0"
     state: present

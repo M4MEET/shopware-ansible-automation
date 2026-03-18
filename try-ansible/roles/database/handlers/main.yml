@@ -1,5 +1,5 @@
 ---
-- name: flush mysql privileges
+- name: Flush mysql privileges
   community.mysql.mysql_query:
     query: "FLUSH PRIVILEGES"
     login_unix_socket: /var/run/mysqld/mysqld.sock
