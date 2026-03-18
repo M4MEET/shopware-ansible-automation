@@ -1,10 +1,17 @@
 ---
-- hosts: localhost
-  become: yes
+- name: Deploy Shopware platform
+  hosts: remote_servers
 
   roles:
-    - common
-    - php
-    - mariadb
-    - nginx
-    - shopware
+    - role: common
+      tags: [common, setup]
+    - role: ufw
+      tags: [ufw, security, firewall]
+    - role: php
+      tags: [php, setup]
+    - role: mariadb
+      tags: [mariadb, database]
+    - role: nginx
+      tags: [nginx, webserver]
+    - role: shopware
+      tags: [shopware, app]
