@@ -1,0 +1,12 @@
+---
+common_packages:
+  - curl
+  - wget
+  - git
+  - unzip
+  - software-properties-common
+  - gnupg2
+
+swap_enabled: true
+swap_size_mb: 2048
+swap_file_path: /swapfile
