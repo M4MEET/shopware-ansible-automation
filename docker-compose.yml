@@ -1,0 +1,19 @@
+---
+services:
+  ansible:
+    build: .
+    volumes:
+      - ./try-ansible:/workspace/try-ansible
+    working_dir: /workspace/try-ansible
+    command: >
+      bash -c "ansible-galaxy collection install -r requirements.yml &&
+               ansible-playbook playbook.yml --syntax-check"
+    depends_on:
+      - target
+
+  target:
+    image: ubuntu:24.04
+    privileged: true
+    command: /bin/bash -c "apt-get update && apt-get install -y openssh-server && mkdir /run/sshd && /usr/sbin/sshd -D"
+    expose:
+      - "22"
