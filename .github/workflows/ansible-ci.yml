@@ -10,6 +10,9 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: try-ansible
     steps:
       - uses: actions/checkout@v4
 
@@ -19,14 +22,14 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: |
-          pip install ansible-core ansible-lint
+        working-directory: .
+        run: pip install ansible-core ansible-lint
 
       - name: Install Ansible Galaxy collections
-        run: ansible-galaxy collection install -r try-ansible/requirements.yml
+        run: ansible-galaxy collection install -r requirements.yml
 
       - name: Run ansible-lint
-        run: ansible-lint try-ansible/playbook.yml
+        run: ansible-lint playbook.yml
 
       - name: Syntax check
-        run: ansible-playbook try-ansible/playbook.yml --syntax-check
+        run: ansible-playbook playbook.yml --syntax-check
