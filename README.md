@@ -73,7 +73,7 @@ Once the playbook completes, Shopware is available at your server's IP or domain
 | **common** | Updates apt cache, installs base utilities, configures swap |
 | **ufw** | Configures UFW firewall (allows SSH, HTTP, HTTPS only) |
 | **php** | Adds ondrej/php PPA, installs PHP + FPM + extensions, deploys pool tuning |
-| **mariadb** | Installs MariaDB, hardens it (removes anonymous users, test DB, remote root), creates Shopware DB and user |
+| **database** | Installs MariaDB or MySQL (configurable via `db_engine`), hardens it, creates Shopware DB and user |
 | **nginx** | Installs Nginx, deploys Shopware vhost config, configures log rotation, optional SSL via Let's Encrypt |
 | **shopware** | Installs Composer (with hash verification), installs Shopware, generates `.env`, runs `system:install`, warms cache |
 
@@ -102,13 +102,15 @@ All values are configurable through role defaults in `roles/<role>/defaults/main
 
 | Variable | Default | Role |
 |----------|---------|------|
+| `db_engine` | `mariadb` | database |
 | `php_version` | `8.2` | php, nginx |
-| `mariadb_version` | `10.11` | mariadb |
+| `mariadb_version` | `10.11` | database |
+| `mysql_version` | `8.0` | database |
 | `shopware_version` | `6.5.8.7` | shopware |
 | `shopware_root` | `/var/www/shopware` | shopware, nginx |
 | `server_name` | `_` | nginx |
-| `shopware_db_name` | `shopware` | mariadb |
-| `shopware_db_user` | `shopware` | mariadb |
+| `shopware_db_name` | `shopware` | database |
+| `shopware_db_user` | `shopware` | database |
 | `shopware_db_password` | *(vault)* | vault |
 | `shopware_app_url` | `http://localhost` | shopware |
 
@@ -145,11 +147,11 @@ All values are configurable through role defaults in `roles/<role>/defaults/main
 | `swap_enabled` | `true` |
 | `swap_size_mb` | `2048` |
 
-**Example:** deploy with a different PHP version and SSL enabled:
+**Example:** deploy with MySQL instead of MariaDB, a different PHP version, and SSL:
 
 ```bash
 ansible-playbook playbook.yml \
-  -e "php_version=8.3 ssl_enabled=true certbot_email=admin@example.com server_name=shop.example.com"
+  -e "db_engine=mysql php_version=8.3 ssl_enabled=true certbot_email=admin@example.com server_name=shop.example.com"
 ```
 
 ## Local Testing with Docker
@@ -185,10 +187,13 @@ try-ansible/
     │   ├── handlers/main.yml
     │   ├── tasks/main.yml
     │   └── templates/www.conf.j2
-    ├── mariadb/
+    ├── database/
     │   ├── defaults/main.yml
     │   ├── handlers/main.yml
-    │   └── tasks/main.yml
+    │   └── tasks/
+    │       ├── main.yml          # Dispatches to mariadb.yml or mysql.yml
+    │       ├── mariadb.yml
+    │       └── mysql.yml
     ├── nginx/
     │   ├── defaults/main.yml
     │   ├── handlers/main.yml
@@ -210,6 +215,6 @@ try-ansible/
 - **Do not commit** the `inventory` file — it contains real server IPs (it is gitignored; use `inventory.sample` as a starting point).
 - **Database password** is stored in Ansible Vault (`group_vars/remote_servers/vault.yml`). Encrypt it before committing.
 - **Composer installer** is hash-verified against the official signature before execution.
-- **MariaDB** is hardened automatically: anonymous users removed, test DB dropped, remote root disabled.
+- **Database** (MariaDB or MySQL) is hardened automatically: anonymous users removed, test DB dropped, remote root disabled.
 - **UFW firewall** denies all incoming traffic except SSH, HTTP, and HTTPS.
 - The playbook connects as `root` via SSH. For production, consider using a non-root user with `become` privilege escalation.
